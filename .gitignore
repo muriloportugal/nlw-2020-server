@@ -10,7 +10,7 @@ uploads/*
 !uploads/organicos.svg
 !uploads/papeis-papelao.svg
 # database server project
-*.sqlite
+src/database/*.sqlite
 
 
 # Logs
