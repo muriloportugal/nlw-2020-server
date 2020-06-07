@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
-import cors from 'cors';
+import cors from 'cors'; 
 import { errors, isCelebrate, CelebrateInternalError } from 'celebrate';
 
 import routes from './routes';
