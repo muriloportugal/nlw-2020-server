@@ -12,8 +12,9 @@ app.use(express.json());
 
 app.use(routes);
 
-const uploadFolder = path.resolve(__dirname,'..','uploads');
-app.use('/uploads', express.static(uploadFolder));
+const uploadFolder = path.join(__dirname,'../','uploads');
+console.log(uploadFolder);
+app.use('/uploads', express.static(uploadFolder,{ maxAge: 86400000 }));
 
 // Tudo isso pq o JS não tem um replaceAll já implementado...
 declare global {
@@ -50,5 +51,5 @@ app.use((
   return response.status(500).send(error);
 });
 
-const port = process.env.PORT || 3333;
+const port = process.env.PORT;
 app.listen(port, () => console.log(`listen on port ${port}`));
