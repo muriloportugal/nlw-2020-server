@@ -14,7 +14,7 @@ app.use(routes);
 
 const uploadFolder = path.join(__dirname,'../','uploads');
 console.log(uploadFolder);
-app.use('/uploads', express.static(uploadFolder,{ maxAge: 86400000 }));
+app.use('/uploads', express.static('/uploads',{ maxAge: 86400000 }));
 
 // Tudo isso pq o JS não tem um replaceAll já implementado...
 declare global {
