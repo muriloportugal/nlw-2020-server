@@ -145,7 +145,7 @@ var PointsController = /** @class */ (function () {
                                 point_id: point_id_1,
                             };
                         });
-                        return [4 /*yield*/, trx('point_item').insert(pointItems)];
+                        return [4 /*yield*/, trx('point_items').insert(pointItems)];
                     case 4:
                         _b.sent();
                         return [4 /*yield*/, trx.commit()];
