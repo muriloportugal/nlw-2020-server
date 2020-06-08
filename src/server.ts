@@ -13,7 +13,6 @@ app.use(express.json());
 app.use(routes);
 
 const uploadFolder = path.join(__dirname,'../','uploads');
-console.log(uploadFolder);
 app.use('/uploads', express.static(uploadFolder,{ maxAge: 86400000 }));
 
 // Tudo isso pq o JS não tem um replaceAll já implementado...
@@ -41,14 +40,19 @@ app.use((
   response: Response,
   next: NextFunction
 ) => {
- 
+  console.log();
+  //Deleta a imagem em caso de erro, pois o point não foi criado.
   if(isCelebrate(error)) {
-    //Deleta a imagem em caso de erro, pois o point não foi criado.
     deleteUploadedImages(path.resolve(uploadFolder,request.file.filename));
+    // Se o erro vier do Celebrate limpa a mensagem antes de enviar
     const message = error.joi.message.replaceAll('"','');
     return response.status(400).json({error: message});
-  }  
-  return response.status(500).send(error);
+  }else if(request.file.filename) {
+    // Se o erro vier de outra rota só apaga a imagem e envia o a mensagem de erro
+    deleteUploadedImages(path.resolve(uploadFolder,request.file.filename));
+    return response.status(400).json({error: error.message});
+  }
+  return response.status(500).send({ error: error });
 });
 
 const port = process.env.PORT;

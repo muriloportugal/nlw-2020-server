@@ -45,17 +45,18 @@ var ItemsController = /** @class */ (function () {
     }
     ItemsController.prototype.index = function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var items, serializedItems;
+            var items, imgUrl, serializedItems;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, connection_1.default('items').select('*')];
                     case 1:
                         items = _a.sent();
+                        imgUrl = process.env.APP_URL + '/uploads';
                         serializedItems = items.map(function (item) {
                             return {
                                 id: item.id,
                                 title: item.title,
-                                image_url: "http://192.168.1.100:3333/uploads/" + item.image,
+                                image_url: imgUrl + "/" + item.image,
                             };
                         });
                         return [2 /*return*/, response.json(serializedItems)];

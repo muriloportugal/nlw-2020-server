@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import knex from '../database/connection';
 
 class PointsController {
@@ -18,10 +18,11 @@ class PointsController {
       .distinct()
       .select('points.*');
 
+    const imgUrl = process.env.APP_URL + '/uploads';
     const serializedPoints = points.map(point => {
       return {
         ...point,
-        image_url: `https://nwl-2020-server.herokuapp.com/uploads/${point.image}`,
+        image_url: `${imgUrl}/${point.image}`,
       };
     });
     return response.json(serializedPoints);
@@ -40,15 +41,16 @@ class PointsController {
       .where('point_items.point_id', id)
       .select('items.title');
 
+    const imgUrl = process.env.APP_URL + '/uploads';
     const serializedPoint = {
       ...point,
-      image_url: `https://nwl-2020-server.herokuapp.com/uploads/${point.image}`,
+      image_url: `${imgUrl}/${point.image}`,
     };
 
     return response.json({ serializedPoint, items });
   }
 
-  async create(request: Request, response: Response) {
+  async create(request: Request, response: Response, next: NextFunction) {
     const {
       name,
       email,
@@ -75,28 +77,32 @@ class PointsController {
       city,
       uf,
     }
-    const insertedIds = await trx('points').insert(point);
-  
-    const point_id = insertedIds[0];
-  
-    const pointItems = items
-      .split(',')
-      .map((item: string) => Number(item.trim()))
-      .map((item_id: number) => {
-        return {
-          item_id,
-          point_id,
-        }
-      });
-  
-    await trx('point_items').insert(pointItems);
+    try {
+      const insertedIds = await trx('points').insert(point).returning('id');
+      
+      const point_id = insertedIds[0];
+      const pointItems = items
+        .split(',')
+        .map((item: string) => Number(item.trim()))
+        .map((item_id: number) => {
+          return {
+            item_id,
+            point_id,
+          }
+        });
+      await trx('point_item').insert(pointItems);
 
-    await trx.commit();
+      await trx.commit();
+      
+      return response.json({
+        id: point_id,
+        ...point,
+      });
+    } catch (error) {
+      //Envia o erro para a função que lida com erros no arquivo server.ts
+      return next(error);
+    }
     
-    return response.json({
-      id: point_id,
-      ...point,
-    });
   }
 }
 

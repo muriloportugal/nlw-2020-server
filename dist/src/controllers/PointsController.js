@@ -56,7 +56,7 @@ var PointsController = /** @class */ (function () {
     }
     PointsController.prototype.index = function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, city, uf, items, parsedItems, points, serializedPoints;
+            var _a, city, uf, items, parsedItems, points, imgUrl, serializedPoints;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -73,8 +73,9 @@ var PointsController = /** @class */ (function () {
                                 .select('points.*')];
                     case 1:
                         points = _b.sent();
+                        imgUrl = process.env.APP_URL + '/uploads';
                         serializedPoints = points.map(function (point) {
-                            return __assign(__assign({}, point), { image_url: "http://192.168.1.100:3333/uploads/" + point.image });
+                            return __assign(__assign({}, point), { image_url: imgUrl + "/" + point.image });
                         });
                         return [2 /*return*/, response.json(serializedPoints)];
                 }
@@ -83,7 +84,7 @@ var PointsController = /** @class */ (function () {
     };
     PointsController.prototype.show = function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var id, point, items, serializedPoint;
+            var id, point, items, imgUrl, serializedPoint;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -100,15 +101,16 @@ var PointsController = /** @class */ (function () {
                                 .select('items.title')];
                     case 2:
                         items = _a.sent();
-                        serializedPoint = __assign(__assign({}, point), { image_url: "http://192.168.1.100:3333/uploads/" + point.image });
+                        imgUrl = process.env.APP_URL + '/uploads';
+                        serializedPoint = __assign(__assign({}, point), { image_url: imgUrl + "/" + point.image });
                         return [2 /*return*/, response.json({ serializedPoint: serializedPoint, items: items })];
                 }
             });
         });
     };
-    PointsController.prototype.create = function (request, response) {
+    PointsController.prototype.create = function (request, response, next) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, name, email, whatsapp, latitude, longitude, city, uf, items, whatsappString, trx, point, insertedIds, point_id, pointItems;
+            var _a, name, email, whatsapp, latitude, longitude, city, uf, items, whatsappString, trx, point, insertedIds, point_id_1, pointItems, error_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -127,26 +129,34 @@ var PointsController = /** @class */ (function () {
                             city: city,
                             uf: uf,
                         };
-                        return [4 /*yield*/, trx('points').insert(point)];
+                        _b.label = 2;
                     case 2:
+                        _b.trys.push([2, 6, , 7]);
+                        return [4 /*yield*/, trx('points').insert(point).returning('id')];
+                    case 3:
                         insertedIds = _b.sent();
-                        point_id = insertedIds[0];
+                        point_id_1 = insertedIds[0];
                         pointItems = items
                             .split(',')
                             .map(function (item) { return Number(item.trim()); })
                             .map(function (item_id) {
                             return {
                                 item_id: item_id,
-                                point_id: point_id,
+                                point_id: point_id_1,
                             };
                         });
-                        return [4 /*yield*/, trx('point_items').insert(pointItems)];
-                    case 3:
-                        _b.sent();
-                        return [4 /*yield*/, trx.commit()];
+                        return [4 /*yield*/, trx('point_item').insert(pointItems)];
                     case 4:
                         _b.sent();
-                        return [2 /*return*/, response.json(__assign({ id: point_id }, point))];
+                        return [4 /*yield*/, trx.commit()];
+                    case 5:
+                        _b.sent();
+                        return [2 /*return*/, response.json(__assign({ id: point_id_1 }, point))];
+                    case 6:
+                        error_1 = _b.sent();
+                        //Envia o erro para a função que lida com erros no arquivo server.ts
+                        return [2 /*return*/, next(error_1)];
+                    case 7: return [2 /*return*/];
                 }
             });
         });

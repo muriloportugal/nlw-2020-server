@@ -31,6 +31,7 @@ routes.post(
   resizeImage,
   pointController.create
 );
+
 routes.get('/points/', pointController.index);
 routes.get('/points/:id', pointController.show);
 
