@@ -9,6 +9,7 @@ uploads/*
 !uploads/oleo.svg
 !uploads/organicos.svg
 !uploads/papeis-papelao.svg
+!uploads/mercadoLogoDefault.png
 # database server project
 src/database/*.sqlite
 
@@ -100,7 +101,7 @@ typings/
 
 # Nuxt.js build / generate output
 .nuxt
-# dist comentado pq estamos usando a past ./dist para armazenar os arquivos typescripts compilados tsc.
+dist
  
 # Gatsby files
 .cache/

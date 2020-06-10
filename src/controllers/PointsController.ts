@@ -10,22 +10,30 @@ class PointsController {
       .split(',')
       .map(item => Number(item.trim()));
 
-    const points = await knex('points')
-      .join('point_items', 'points.id', '=', 'point_items.point_id')
-      .whereIn('point_items.item_id', parsedItems)
-      .where('city',String(city))
-      .where('uf',String(uf))
-      .distinct()
-      .select('points.*');
-
-    const imgUrl = process.env.APP_URL + '/uploads';
-    const serializedPoints = points.map(point => {
-      return {
-        ...point,
-        image_url: `${imgUrl}/${point.image}`,
-      };
-    });
-    return response.json(serializedPoints);
+      try {
+      const points = await knex('points')
+        .join('point_items', 'points.id', '=', 'point_items.point_id')
+        .whereIn('point_items.item_id', parsedItems)
+        .where('city',String(city))
+        .where('uf',String(uf))
+        .distinct()
+        .select('points.*');
+      
+      const imgUrl = process.env.APP_URL + '/uploads';
+      const serializedPoints = points.map(point => {
+        return {
+          ...point,
+          latitude: Number(point.latitude),
+          longitude: Number(point.longitude),
+          image_url: `${imgUrl}/${point.image}`,
+        };
+      });
+      return response.json(serializedPoints);
+    } catch (error) {
+      console.log(error);
+      return response.json({error: error.message});
+    }
+    
   }
 
   async show(request: Request, response: Response) {
@@ -63,12 +71,10 @@ class PointsController {
     } = request.body;
     const whatsappString = String(whatsapp);
     
-    // Transaction serve para que se der erro no 2° insert ele da um rowback no primeiro
-    // Pois pela nossa regra de negócio uma depende da outra para existir
-    const trx = await knex.transaction();
-    
+    const default_image = process.env.DEFAULT_IMAGE;
+    const image_name = (request.file && process.env.NODE_ENV === 'dev') ? request.file.filename : default_image ;
     const point = {
-      image: request.file.filename,
+      image: image_name,
       name,
       email,
       whatsapp: whatsappString,
@@ -78,6 +84,9 @@ class PointsController {
       uf,
     }
     try {
+      // Transaction serve para que se der erro no 2° insert ele da um rowback no primeiro
+      // Pois pela nossa regra de negócio uma depende da outra para existir
+      const trx = await knex.transaction();
       const insertedIds = await trx('points').insert(point).returning('id');
       
       const point_id = insertedIds[0];
