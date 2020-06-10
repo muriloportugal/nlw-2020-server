@@ -16,8 +16,8 @@ app.use(cors());
 app.use(express.json());
 app.use(routes);
 
-const uploadFolder = path.join(__dirname,'../../uploads');
-console.log(uploadFolder);
+const uploadFolder = (process.env.NODE_ENV === 'dev') ? path.join(__dirname,'../uploads') : path.join(__dirname,'../../uploads');
+
 app.use('/uploads', express.static(uploadFolder,{ maxAge: 86400000 }));
 
 // Tudo isso pq o JS não tem um replaceAll já implementado...
