@@ -10,6 +10,8 @@
     "dev": "ts-node-dev -r dotenv/config --transpileOnly --ignore-watch node_modules src/server.ts",
     "knex:migrate": "knex --knexfile knexfile.ts migrate:latest",
     "knex:seed": "knex --knexfile knexfile.ts seed:run",
+    "prod:knex:migrate": "knex --knexfile dist/knexfile.js migrate:latest",
+    "prod:knex:seed": "knex --knexfile dist/knexfile.js seed:run",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
