@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 app.use(routes);
 
-const uploadFolder = path.join(__dirname,'../uploads');
+const uploadFolder = path.join(__dirname,'../../uploads');
 console.log(uploadFolder);
 app.use('/uploads', express.static(uploadFolder,{ maxAge: 86400000 }));
 

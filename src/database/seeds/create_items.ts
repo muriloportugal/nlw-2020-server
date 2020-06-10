@@ -1,6 +1,9 @@
 import Knex from 'knex';
 
 export async function seed(knex: Knex) {
+  // Deleta todo o conteúdo de items
+  await knex('items').delete();
+  // Insere novamente os dados de items.
   await knex('items').insert([
     { title: 'Lâmpadas', image: 'lampadas.svg'},
     { title: 'Pilhas e Baterias', image: 'baterias.svg'},
