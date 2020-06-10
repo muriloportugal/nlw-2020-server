@@ -1,7 +1,6 @@
 import express from 'express';
 import multer from 'multer';
 import { celebrate, Joi } from 'celebrate';
-import sharp from 'sharp';
 
 import PointController from './controllers/PointsController';
 import ItemController from './controllers/itemsController';
