@@ -52,6 +52,8 @@ class PointsController {
     const imgUrl = process.env.APP_URL + '/uploads';
     const serializedPoint = {
       ...point,
+      latitude: Number(point.latitude),
+      longitude: Number(point.longitude),
       image_url: `${imgUrl}/${point.image}`,
     };
 
@@ -70,7 +72,6 @@ class PointsController {
       items,
     } = request.body;
     const whatsappString = String(whatsapp);
-    
     const default_image = process.env.DEFAULT_IMAGE;
     const image_name = (request.file && process.env.NODE_ENV === 'dev') ? request.file.filename : default_image ;
     const point = {

@@ -9,7 +9,7 @@ uploads/*
 !uploads/oleo.svg
 !uploads/organicos.svg
 !uploads/papeis-papelao.svg
-!uploads/mercadoLogoDefault.png
+!uploads/mercadoLogoDefault.jpeg
 # database server project
 src/database/*.sqlite
 

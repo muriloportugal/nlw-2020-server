@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import sharp from 'sharp';
+import fs from 'fs';
 
 import deleteUploadedImage from './deleteUploadedImage';
 
@@ -11,16 +12,21 @@ const resizeImage = (request: Request, response: Response, next: NextFunction) =
       .resize(800, 600)
       .toFile(outputFile)
       .then(file => {
-        deleteUploadedImage(inputFile);
-        request.file.path = outputFile;
-        request.file.filename = request.file.filename.split('.').join('-resized.');
-        return next();
+        
+        if(deleteUploadedImage(inputFile)) {
+          fs.rename(outputFile,inputFile, (error) => {
+            if(error){
+              console.log(`Erro ao renomear imagem ${error}`);
+            }
+          });
+        };
+        next();
       })
       .catch(error => {
         return response.status(500).json({error:`Resize image error. ${error.message}.`});
       });
   }
-  return next();
+  //return next();
   
 };
 
