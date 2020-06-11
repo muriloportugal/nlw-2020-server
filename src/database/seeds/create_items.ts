@@ -1,6 +1,10 @@
 import Knex from 'knex';
 
 export async function seed(knex: Knex) {
+  // Tem que apagar point_items primeiro pois ela tem chave das outras tabelas
+  await knex('point_items').delete();
+  // Apaga o conteúdo de points
+  await knex('points').delete();
   // Deleta todo o conteúdo de items
   await knex('items').delete();
   // Insere novamente os dados de items.
