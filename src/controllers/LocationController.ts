@@ -38,6 +38,7 @@ class LocationController {
       });
       if( locations.length < 0 ){
         console.log(api_response.data);
+        return response.json(api_response.data);
       }
       return response.json(locations);
 
