@@ -36,7 +36,8 @@ class LocationController {
           location: result.geometry.location
         }
       });
-      if( locations.length < 0 ){
+      
+      if( locations.length <= 0 ){
         console.log(api_response.data);
         return response.json(api_response.data);
       }
